@@ -31,17 +31,17 @@ namespace SASHotkeys
 			return result;
 		}
 
-		public Parameters ()
+		void Initialize ()
 		{
 			Debug.Log ("Initializing SASHotkeys parameters");
 
 			foreach (UrlDir.UrlConfig urlConfig in GameDatabase.Instance.GetConfigs(configName)) {
-				configFileName = urlConfig.parent.fullPath;
-				globalConfigNode = urlConfig.config;
+				configFile = urlConfig.parent;
+				configNode = urlConfig.config;
 				break;
 			}
 
-			if (globalConfigNode == null) {
+			if (configNode == null) {
 				Debug.LogError ("Could not find SASHotkeys config file. Configurations will not be saved.");
 				return;
 			}
@@ -49,27 +49,28 @@ namespace SASHotkeys
 
 		public override void OnLoad (ConfigNode node)
 		{
-			if (globalConfigNode == null) {
-				Debug.LogWarning ("SASHotkeys configuration file is missing.");
-				return;
+			if (configNode == null) {
+				Initialize ();
+				if (configNode == null) {
+					return;
+				}
 			}
 			Debug.Log ("Loading SAS Hotkeys");
-			globalConfigNode.TryGetValue (valueName, ref someValue);
+			configNode.TryGetValue (valueName, ref someValue);
 		}
 
 		public override void OnSave (ConfigNode node)
 		{
-			if (globalConfigNode == null) {
-				Debug.LogWarning ("SASHotkeys configuration file is missing.");
+			if (configNode == null) {
 				return;
 			}
 			Debug.Log ("Saving SAS Hotkeys");
-			globalConfigNode.SetValue (valueName, someValue, true);
-			globalConfigNode.Save (configFileName);
+			configNode.SetValue (valueName, someValue, true);
+			configFile.SaveConfigs ();
 		}
 
-		ConfigNode globalConfigNode;
-		string configFileName;
+		ConfigNode configNode;
+		UrlDir.UrlFile configFile;
 	}
 
 	[KSPAddon (KSPAddon.Startup.MainMenu, true)]

@@ -1,7 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Text;
+using System.Collections;
+using System.Collections.Generic;
+using System.Reflection;
 using UnityEngine;
 
 namespace SASHotkeys
@@ -9,20 +10,26 @@ namespace SASHotkeys
 	public class Parameters : GameParameters.CustomParameterNode
 	{
 		public override string Title { get { return "SAS Hotkeys"; } }
-
 		public override GameParameters.GameMode GameMode { get { return GameParameters.GameMode.ANY; } }
-
 		public override bool HasPresets { get { return false; } }
-
 		public override string Section { get { return "SAS Hotkeys"; } }
-
 		public override int SectionOrder { get { return 1; } }
 
-		[GameParameters.CustomIntParameterUI ("Some Value", minValue = -100, maxValue = 100, stepSize = 1, autoPersistance = false, toolTip = "Some value")]
-		public int someValue = 0;
+		[GameParameters.CustomIntParameterUI ("Some Value", autoPersistance = false, toolTip = "Some value")]
+		public string someValue = "null";
 
 		const string configName = "SASHotkeysConfig";
 		const string valueName = "someValue";
+
+		public override IList ValidValues(MemberInfo member)
+		{
+			ArrayList result = new ArrayList ();
+			result.Add ("null");
+			foreach (object keyCode in Enum.GetValues(typeof(KeyCode))) {
+				result.Add(keyCode.ToString());
+			}
+			return result;
+		}
 
 		public Parameters ()
 		{
@@ -35,25 +42,29 @@ namespace SASHotkeys
 			}
 
 			if (globalConfigNode == null) {
-				Debug.LogError ("Could not find config file. Configurations will not be saved.");
+				Debug.LogError ("Could not find SASHotkeys config file. Configurations will not be saved.");
 				return;
 			}
 		}
 
 		public override void OnLoad (ConfigNode node)
 		{
+			if (globalConfigNode == null) {
+				Debug.LogWarning ("SASHotkeys configuration file is missing.");
+				return;
+			}
 			Debug.Log ("Loading SAS Hotkeys");
 			globalConfigNode.TryGetValue (valueName, ref someValue);
 		}
 
 		public override void OnSave (ConfigNode node)
 		{
-			Debug.Log ("Saving SAS Hotkeys");
-			if (globalConfigNode.HasValue (valueName)) {
-				globalConfigNode.SetValue (valueName, someValue);
-			} else {
-				globalConfigNode.AddValue (valueName, someValue);
+			if (globalConfigNode == null) {
+				Debug.LogWarning ("SASHotkeys configuration file is missing.");
+				return;
 			}
+			Debug.Log ("Saving SAS Hotkeys");
+			globalConfigNode.SetValue (valueName, someValue, true);
 			globalConfigNode.Save (configFileName);
 		}
 

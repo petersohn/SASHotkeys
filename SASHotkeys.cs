@@ -10,23 +10,27 @@ namespace SASHotkeys
 	public class Parameters : GameParameters.CustomParameterNode
 	{
 		public override string Title { get { return "SAS Hotkeys"; } }
+
 		public override GameParameters.GameMode GameMode { get { return GameParameters.GameMode.ANY; } }
+
 		public override bool HasPresets { get { return false; } }
+
 		public override string Section { get { return "SAS Hotkeys"; } }
+
 		public override int SectionOrder { get { return 1; } }
 
-		[GameParameters.CustomIntParameterUI ("Some Value", autoPersistance = false, toolTip = "Some value")]
+		[GameParameters.CustomIntParameterUI ("Hold Propagade", autoPersistance = false, toolTip = "Hold Propagade")]
 		public string someValue = "null";
 
 		const string configName = "SASHotkeysConfig";
 		const string valueName = "someValue";
 
-		public override IList ValidValues(MemberInfo member)
+		public override IList ValidValues (MemberInfo member)
 		{
 			ArrayList result = new ArrayList ();
 			result.Add ("null");
 			foreach (object keyCode in Enum.GetValues(typeof(KeyCode))) {
-				result.Add(keyCode.ToString());
+				result.Add (keyCode.ToString ());
 			}
 			return result;
 		}
@@ -57,6 +61,10 @@ namespace SASHotkeys
 			}
 			Debug.Log ("Loading SAS Hotkeys");
 			configNode.TryGetValue (valueName, ref someValue);
+
+			if (Main.Instance != null) {
+				Main.Instance.holdPropagade = createKeyBinding (someValue);
+			}
 		}
 
 		public override void OnSave (ConfigNode node)
@@ -69,23 +77,65 @@ namespace SASHotkeys
 			configFile.SaveConfigs ();
 		}
 
+		static KeyBinding createKeyBinding (string code)
+		{
+			try {
+				return new KeyBinding ((KeyCode)Enum.Parse (typeof(KeyCode), code));
+			} catch (ArgumentException) {
+				return null;
+			}	
+		}
+
 		ConfigNode configNode;
 		UrlDir.UrlFile configFile;
 	}
 
 	[KSPAddon (KSPAddon.Startup.MainMenu, true)]
-	public class MainMenuBehaviour : MonoBehaviour
+	public class Main : MonoBehaviour
 	{
+		public static Main Instance { get; private set; }
+
 		void Awake ()
 		{
+			Instance = this;
 		}
+
+		public KeyBinding holdPropagade;
+	}
+
+	class KeyState {
+		public KeyState(KeyBinding keyBinding)
+		{
+			this.keyBinding = keyBinding;
+		}
+
+		public bool isPressed() {
+			bool state = keyBinding.GetKey ();
+			bool result = state && !lastState;
+			lastState = state;
+			return result;
+		}
+
+		KeyBinding keyBinding;
+		bool lastState = false;
 	}
 
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
 	public class FlightBehaviour : MonoBehaviour
 	{
-		void Awake ()
+		void Awake()
 		{
+			holdPropagadeState = new KeyState (Main.Instance.holdPropagade);
 		}
+
+		void Update ()
+		{
+			Vessel activeVessel = FlightGlobals.ActiveVessel;
+			if (holdPropagadeState.isPressed ()) {
+				activeVessel.Autopilot.SetMode (VesselAutopilot.AutopilotMode.Prograde);
+			}
+		}
+
+		KeyState holdPropagadeState;
 	}
 }

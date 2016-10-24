@@ -7,6 +7,10 @@ using UnityEngine;
 
 namespace SASHotkeys
 {
+	internal class Constants {
+		public const string logPrefix = "<SASHotkeys>";
+	}
+
 	public class Parameters : GameParameters.CustomParameterNode
 	{
 		public override string Title { get { return "SAS Hotkeys"; } }
@@ -24,6 +28,7 @@ namespace SASHotkeys
 
 		const string configName = "SASHotkeysConfig";
 		const string valueName = "someValue";
+		static readonly string saveFileName = KSPUtil.ApplicationRootPath + "GameData/SASHotkeys_settings.cfg";
 
 		public override IList ValidValues (MemberInfo member)
 		{
@@ -35,59 +40,62 @@ namespace SASHotkeys
 			return result;
 		}
 
-		void Initialize ()
+		void CreateKeyBindings()
 		{
-			Debug.Log ("Initializing SASHotkeys parameters");
-
-			foreach (UrlDir.UrlConfig urlConfig in GameDatabase.Instance.GetConfigs(configName)) {
-				configFile = urlConfig.parent;
-				configNode = urlConfig.config;
-				break;
-			}
-
-			if (configNode == null) {
-				Debug.LogError ("Could not find SASHotkeys config file. Configurations will not be saved.");
-				return;
-			}
-		}
-
-		public override void OnLoad (ConfigNode node)
-		{
-			if (configNode == null) {
-				Initialize ();
-				if (configNode == null) {
-					return;
-				}
-			}
-			Debug.Log ("Loading SAS Hotkeys");
-			configNode.TryGetValue (valueName, ref someValue);
-
 			if (Main.Instance != null) {
+				Debug.Log (Constants.logPrefix + "Creating key bindings.");
 				Main.Instance.holdPropagade = createKeyBinding (someValue);
 			}
+		}
+			
+		public override void OnLoad (ConfigNode node)
+		{
+			Debug.Log (Constants.logPrefix + "Loading from file.");
+			configFileNode = ConfigNode.Load (saveFileName);
+			if (configFileNode == null) {
+				Debug.Log (Constants.logPrefix + "Config file does not exist, creating new one.");
+				configFileNode = new ConfigNode ();
+			}
+
+			ConfigNode baseNode = GetOrCreateNode (configFileNode, "SASHotkeys");
+			hotkeysNode = GetOrCreateNode (baseNode, "hotkeys");
+			hotkeysNode.TryGetValue (valueName, ref someValue);
+			CreateKeyBindings ();
 		}
 
 		public override void OnSave (ConfigNode node)
 		{
-			if (configNode == null) {
+			if (configFileNode == null) {
+				Debug.Log (Constants.logPrefix + "SASHotkeys not initialized yet, not saving.");
 				return;
 			}
-			Debug.Log ("Saving SAS Hotkeys");
-			configNode.SetValue (valueName, someValue, true);
-			configFile.SaveConfigs ();
+			Debug.Log (Constants.logPrefix + "Saving SAS Hotkeys");
+			hotkeysNode.SetValue (valueName, someValue, true);
+			configFileNode.Save (saveFileName);
+			CreateKeyBindings ();
 		}
 
-		static KeyBinding createKeyBinding (string code)
+		static ConfigNode GetOrCreateNode(ConfigNode node, string name)
+		{
+			ConfigNode result = node.GetNode (name);
+			if (result == null) {
+				result = new ConfigNode ();
+				node.AddNode (name, result);
+			}
+			return result;
+		}
+
+		static KeyState createKeyBinding (string code)
 		{
 			try {
-				return new KeyBinding ((KeyCode)Enum.Parse (typeof(KeyCode), code));
+				return new KeyState(new KeyBinding ((KeyCode)Enum.Parse (typeof(KeyCode), code)));
 			} catch (ArgumentException) {
 				return null;
 			}	
 		}
-
-		ConfigNode configNode;
-		UrlDir.UrlFile configFile;
+			
+		ConfigNode configFileNode;
+		ConfigNode hotkeysNode;
 	}
 
 	[KSPAddon (KSPAddon.Startup.MainMenu, true)]
@@ -100,10 +108,10 @@ namespace SASHotkeys
 			Instance = this;
 		}
 
-		public KeyBinding holdPropagade;
+		internal KeyState holdPropagade;
 	}
 
-	class KeyState {
+	internal class KeyState {
 		public KeyState(KeyBinding keyBinding)
 		{
 			this.keyBinding = keyBinding;
@@ -123,19 +131,13 @@ namespace SASHotkeys
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
 	public class FlightBehaviour : MonoBehaviour
 	{
-		void Awake()
-		{
-			holdPropagadeState = new KeyState (Main.Instance.holdPropagade);
-		}
-
 		void Update ()
 		{
 			Vessel activeVessel = FlightGlobals.ActiveVessel;
-			if (holdPropagadeState.isPressed ()) {
+			if (Main.Instance.holdPropagade != null &&
+					Main.Instance.holdPropagade.isPressed ()) {
 				activeVessel.Autopilot.SetMode (VesselAutopilot.AutopilotMode.Prograde);
 			}
 		}
-
-		KeyState holdPropagadeState;
 	}
 }

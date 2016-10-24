@@ -4,8 +4,6 @@ using UnityEngine;
 
 namespace SASHotkeys
 {
-	
-
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
 	public class FlightBehaviour : MonoBehaviour
 	{

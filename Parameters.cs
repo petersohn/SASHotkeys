@@ -35,25 +35,18 @@ namespace SASHotkeys
 			return result;
 		}
 
-		void CreateKeyBindings()
-		{
-			Debug.Log (Constants.logPrefix + "Creating key bindings.");
-			GlobalStorage.Instance.holdPropagade = createKeyBinding (someValue);
-		}
-
 		public override void OnLoad (ConfigNode node)
 		{
 			Debug.Log (Constants.logPrefix + "Loading from file.");
 			configFileNode = ConfigNode.Load (saveFileName);
 			if (configFileNode == null) {
-				Debug.Log (Constants.logPrefix + "Config file does not exist, creating new one.");
+				Debug.LogWarning (Constants.logPrefix + "Config file does not exist, using empty config.");
 				configFileNode = new ConfigNode ();
 			}
 
 			ConfigNode baseNode = GetOrCreateNode (configFileNode, "SASHotkeys");
 			hotkeysNode = GetOrCreateNode (baseNode, "hotkeys");
-			hotkeysNode.TryGetValue (valueName, ref someValue);
-			CreateKeyBindings ();
+			GlobalStorage.Instance.holdPropagade = LoadKeyState (hotkeysNode, valueName, out someValue);
 		}
 
 		public override void OnSave (ConfigNode node)
@@ -63,9 +56,8 @@ namespace SASHotkeys
 				return;
 			}
 			Debug.Log (Constants.logPrefix + "Saving SAS Hotkeys");
-			hotkeysNode.SetValue (valueName, someValue, true);
+			GlobalStorage.Instance.holdPropagade = SaveKeyState (hotkeysNode, valueName, someValue);
 			configFileNode.Save (saveFileName);
-			CreateKeyBindings ();
 		}
 
 		static ConfigNode GetOrCreateNode(ConfigNode node, string name)
@@ -78,15 +70,33 @@ namespace SASHotkeys
 			return result;
 		}
 
-		static KeyState createKeyBinding (string code)
+		static KeyState LoadKeyState(ConfigNode node, string name, out string keyStateName)
 		{
-			try {
-				return new KeyState(new KeyBinding ((KeyCode)Enum.Parse (typeof(KeyCode), code)));
-			} catch (ArgumentException) {
+			ConfigNode keyStateNode = node.GetNode (name);
+			if (keyStateNode == null) {
+				keyStateName = "null";
 				return null;
-			}	
+			}
+			KeyState keyState = new KeyState ();
+			keyState.Load (keyStateNode);
+			keyStateName = keyState.KeyBinding.name;
+			return keyState;
 		}
 
+		static KeyState SaveKeyState(ConfigNode node, string name, String keyStateName)
+		{
+			Debug.LogFormat (Constants.logPrefix + "Saving key {0}", keyStateName);
+			KeyState keyState = KeyState.FromString (keyStateName);
+			if (keyState != null) {
+				ConfigNode keyStateNode = new ConfigNode ();
+				keyState.Save (keyStateNode);
+				node.SetNode (name, keyStateNode, true);
+			} else {
+				node.RemoveNodes (name);
+			}
+			return keyState;
+		}
+			
 		ConfigNode configFileNode;
 		ConfigNode hotkeysNode;
 	}

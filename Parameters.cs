@@ -37,10 +37,8 @@ namespace SASHotkeys
 
 		void CreateKeyBindings()
 		{
-			if (Main.Instance != null) {
-				Debug.Log (Constants.logPrefix + "Creating key bindings.");
-				Main.Instance.holdPropagade = createKeyBinding (someValue);
-			}
+			Debug.Log (Constants.logPrefix + "Creating key bindings.");
+			GlobalStorage.Instance.holdPropagade = createKeyBinding (someValue);
 		}
 
 		public override void OnLoad (ConfigNode node)

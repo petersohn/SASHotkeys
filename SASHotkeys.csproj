@@ -35,6 +35,8 @@
     <Compile Include="SASHotkeys.cs" />
     <Compile Include="Parameters.cs" />
     <Compile Include="Constants.cs" />
+    <Compile Include="GlobalStorage.cs" />
+    <Compile Include="KeyState.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">

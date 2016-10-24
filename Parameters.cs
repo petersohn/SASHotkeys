@@ -8,7 +8,7 @@ namespace SASHotkeys
 {
 	public class Parameters : GameParameters.CustomParameterNode
 	{
-		public override string Title { get { return "SAS Hotkeys"; } }
+		public override string Title { get { return "SAS Hotkeys (effects are applied after scene change)"; } }
 
 		public override GameParameters.GameMode GameMode { get { return GameParameters.GameMode.ANY; } }
 

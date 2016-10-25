@@ -9,11 +9,7 @@ namespace SASHotkeys
 	{
 		void Update ()
 		{
-			Vessel activeVessel = FlightGlobals.ActiveVessel;
-			if (GlobalStorage.Instance.holdPropagade != null &&
-				GlobalStorage.Instance.holdPropagade.isPressed ()) {
-				activeVessel.Autopilot.SetMode (VesselAutopilot.AutopilotMode.Prograde);
-			}
+			GlobalStorage.Instance.holdPropagade.Fire ();
 		}
 	}
 }

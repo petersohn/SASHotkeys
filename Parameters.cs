@@ -46,7 +46,7 @@ namespace SASHotkeys
 
 			ConfigNode baseNode = GetOrCreateNode (configFileNode, "SASHotkeys");
 			hotkeysNode = GetOrCreateNode (baseNode, "hotkeys");
-			GlobalStorage.Instance.holdPropagade = LoadKeyState (hotkeysNode, valueName, out someValue);
+			LoadKeyState (hotkeysNode, valueName,GlobalStorage.Instance.holdPropagade, out someValue);
 		}
 
 		public override void OnSave (ConfigNode node)
@@ -56,7 +56,7 @@ namespace SASHotkeys
 				return;
 			}
 			Debug.Log (Constants.logPrefix + "Saving SAS Hotkeys");
-			GlobalStorage.Instance.holdPropagade = SaveKeyState (hotkeysNode, valueName, someValue);
+			SaveKeyState (hotkeysNode, valueName, GlobalStorage.Instance.holdPropagade, someValue);
 			configFileNode.Save (saveFileName);
 		}
 
@@ -70,31 +70,35 @@ namespace SASHotkeys
 			return result;
 		}
 
-		static KeyState LoadKeyState(ConfigNode node, string name, out string keyStateName)
+		static void LoadKeyState(ConfigNode node, string name,
+				HotkeyAction hotkeyAction, out string keyStateName)
 		{
 			ConfigNode keyStateNode = node.GetNode (name);
-			if (keyStateNode == null) {
-				keyStateName = "null";
-				return null;
-			}
-			KeyState keyState = new KeyState ();
-			keyState.Load (keyStateNode);
-			keyStateName = keyState.KeyBinding.name;
-			return keyState;
+			hotkeyAction.Load (keyStateNode);
+			keyStateName = hotkeyAction.KeyBinding.name;
 		}
 
-		static KeyState SaveKeyState(ConfigNode node, string name, String keyStateName)
+		static void SaveKeyState(ConfigNode node, string name,
+				HotkeyAction hotkeyAction, string keyStateName)
 		{
 			Debug.LogFormat (Constants.logPrefix + "Saving key {0}", keyStateName);
-			KeyState keyState = KeyState.FromString (keyStateName);
-			if (keyState != null) {
+			hotkeyAction.KeyBinding = CreateKeyBinding (keyStateName);
+			if (hotkeyAction.KeyBinding != null) {
 				ConfigNode keyStateNode = new ConfigNode ();
-				keyState.Save (keyStateNode);
+				hotkeyAction.Save (keyStateNode);
 				node.SetNode (name, keyStateNode, true);
 			} else {
 				node.RemoveNodes (name);
 			}
-			return keyState;
+		}
+
+		static KeyBinding CreateKeyBinding(string name)
+		{
+			try {
+				return new KeyBinding ((KeyCode)Enum.Parse (typeof(KeyCode), name));
+			} catch (ArgumentException) {
+				return null;
+			}
 		}
 			
 		ConfigNode configFileNode;

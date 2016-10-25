@@ -35,8 +35,8 @@
     <Compile Include="Parameters.cs" />
     <Compile Include="Constants.cs" />
     <Compile Include="GlobalStorage.cs" />
-    <Compile Include="KeyState.cs" />
     <Compile Include="FlightBehaviour.cs" />
+    <Compile Include="HotkeyAction.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">

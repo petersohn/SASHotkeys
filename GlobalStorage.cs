@@ -2,9 +2,9 @@
 
 namespace SASHotkeys
 {
-	internal class GlobalStorage
+	public class GlobalStorage
 	{
-		static internal GlobalStorage Instance {
+		static public GlobalStorage Instance {
 			get {
 				if (instance == null) {
 					instance = new GlobalStorage ();
@@ -15,7 +15,13 @@ namespace SASHotkeys
 
 		static GlobalStorage instance;
 
-		internal KeyState holdPropagade;
+		GlobalStorage()
+		{
+			holdPropagade = SASHotkeyAction.CreateSASHotkeyAction (
+					null, VesselAutopilot.AutopilotMode.Prograde);
+		}
+
+		public HotkeyAction holdPropagade;
 	}
 }
 

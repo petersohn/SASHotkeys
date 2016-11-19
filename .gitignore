@@ -6,6 +6,7 @@
 [Bb]in/
 packages/
 TestResults/
+/*.dll
 
 # globs
 Makefile.in

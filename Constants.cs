@@ -3,7 +3,7 @@
 namespace SASHotkeys
 {
 	internal class Constants {
-		public const string logPrefix = "<SASHotkeys>";
+		public const string logPrefix = "<SASHotkeys> ";
 	}
 
 }

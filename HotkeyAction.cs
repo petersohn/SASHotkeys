@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace SASHotkeys
 {
-	public class HotkeyAction {
+	public class HotkeyAction : IConfigNode {
 		public delegate void Action();
 
 		public HotkeyAction(Action action, KeyBinding keyBinding = null)
@@ -12,7 +12,7 @@ namespace SASHotkeys
 			this.action = action;
 		}
 
-		internal KeyBinding KeyBinding
+		public KeyBinding KeyBinding
 		{
 			get { return keyBinding; }
 			set { keyBinding = value; }
@@ -26,44 +26,20 @@ namespace SASHotkeys
 			lastState = state;
 		}
 
-		internal void Load(ConfigNode node) {
+		public void Load(ConfigNode node) {
 			if (keyBinding == null) {
 				keyBinding = new KeyBinding ();
 			}
 			keyBinding.Load (node);
 		}
 
-		internal void Save(ConfigNode node) {
+		public void Save(ConfigNode node) {
 			keyBinding.Save (node);
 		}
 
-		KeyBinding keyBinding;
-		bool lastState = false;
-		Action action;
+		private KeyBinding keyBinding;
+		private bool lastState = false;
+		private Action action;
 	}
-
-	internal class SASHotkeyAction {
-		static internal HotkeyAction CreateSASHotkeyAction(KeyBinding keyBinding, VesselAutopilot.AutopilotMode mode)
-		{
-			return new HotkeyAction (new SASHotkeyAction (mode).GetAction (), keyBinding);
-		}
-
-		internal SASHotkeyAction(VesselAutopilot.AutopilotMode mode)
-		{
-			this.mode = mode;
-		}
-
-		internal HotkeyAction.Action GetAction()
-		{
-			return Fire;
-		}
-
-		void Fire()
-		{
-			FlightGlobals.ActiveVessel.Autopilot.SetMode (mode);
-		}
-
-		VesselAutopilot.AutopilotMode mode;
-	};
 }
 

@@ -7,9 +7,9 @@ namespace SASHotkeys
 	[KSPAddon (KSPAddon.Startup.Flight, false)]
 	public class FlightBehaviour : MonoBehaviour
 	{
-		void Update ()
+		public void Update ()
 		{
-			GlobalStorage.Instance.holdPropagade.Fire ();
+			HotkeyManager.MainManager.Fire ();
 		}
 	}
 }

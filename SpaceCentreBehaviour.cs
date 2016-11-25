@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using KSP.UI.Screens;
@@ -92,22 +93,24 @@ namespace SASHotkeys
 			settingsWindowVisible = false;
 		}
 
-		private KeyBinding[] AllKeyBindings
+		private List<KeyBinding> AllKeyBindings
 		{
 			get {
 				if (allKeyBindings == null) {
 					var values = Enum.GetValues (typeof(KeyCode)).Cast<KeyCode> ();
-					allKeyBindings = new KeyBinding[values.Count()];
-					int i = 0;
+					allKeyBindings = new List<KeyBinding> ();
 					foreach (KeyCode key in values) {
-						allKeyBindings [i++] = new KeyBinding (key);
+						// Filter out generic joystick buttons
+						if (!key.ToString ().StartsWith ("JoystickButton")) {
+							allKeyBindings.Add (new KeyBinding (key));
+						}
 					}
 				}
 				return allKeyBindings;
 			}
 		}
 
-		private KeyBinding[] allKeyBindings;
+		private List<KeyBinding> allKeyBindings;
 		private bool settingsWindowVisible = false;
 		private Rect settingsWindowPosition = new Rect (Screen.width / 2 - 100, Screen.height / 2 - 200, 200, 400);
 		private ApplicationLauncherButton toolbarButton;

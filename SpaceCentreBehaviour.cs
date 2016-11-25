@@ -44,6 +44,15 @@ namespace SASHotkeys
 
 		private void DrawSettingsWindow(int windowID)
 		{
+			if (currentAction != null) {
+				foreach (KeyBinding keyBinding in AllKeyBindings) {
+					if (keyBinding.GetKey ()) {
+						currentAction.KeyBinding = keyBinding;
+						currentAction = null;
+						break;
+					}
+				}
+			}
 			GUILayout.BeginVertical ();
 			foreach (var element in HotkeyManager.MainManager) {
 				GUILayout.BeginHorizontal ();
@@ -62,13 +71,6 @@ namespace SASHotkeys
 			if (currentAction == hotkeyAction) {
 				if (GUILayout.Button ("...")) {
 					currentAction = null;
-				}
-				foreach (KeyBinding keyBinding in AllKeyBindings) {
-					if (keyBinding.GetKey ()) {
-						hotkeyAction.KeyBinding = keyBinding;
-						currentAction = null;
-						return;
-					}
 				}
 			} else {
 				if (GUILayout.Button (hotkeyAction.KeyBinding.name)) {

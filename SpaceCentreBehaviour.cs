@@ -113,7 +113,10 @@ namespace SASHotkeys
 
 		private List<KeyBinding> allKeyBindings;
 		private bool settingsWindowVisible = false;
-		private Rect settingsWindowPosition = new Rect (Screen.width / 2 - 100, Screen.height / 2 - 200, 200, 400);
+		private const int windowWidth = 400;
+		private const int windowHeight = 500;
+		private Rect settingsWindowPosition = new Rect (
+			(Screen.width - windowWidth) / 2, (Screen.height - windowHeight) / 2, windowWidth, windowHeight);
 		private ApplicationLauncherButton toolbarButton;
 		private HotkeyAction currentAction;
 	}

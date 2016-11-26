@@ -20,7 +20,7 @@ namespace SASHotkeys
 
 		public void Start()
 		{
-			SASHotkeys.LoadHotkeys ();
+			SASHotkeys.Load ();
 			if (toolbarButton == null) {
 				toolbarButton = ApplicationLauncher.Instance.AddModApplication (
 					OnToolbarOn, OnToolbarOff, null, null, null, null,
@@ -32,14 +32,14 @@ namespace SASHotkeys
 		public void OnDestroy()
 		{
 			ApplicationLauncher.Instance.RemoveModApplication (toolbarButton);
-			SASHotkeys.SaveHotkeys ();
+			SASHotkeys.Save ();
 		}
 
 		public void OnGUI()
 		{
 			if (settingsWindowVisible) {
-				GUILayout.Window(1, settingsWindowPosition,
-					DrawSettingsWindow, "SAS Hotkeys");
+				SASHotkeys.settingsWindowPosition = GUILayout.Window(1, SASHotkeys.settingsWindowPosition,
+					DrawSettingsWindow, "SAS Hotkeys", HighLogic.Skin.window);
 			}
 		}
 
@@ -65,6 +65,7 @@ namespace SASHotkeys
 				GUILayout.EndHorizontal ();
 			}
 			GUILayout.EndVertical ();
+			GUI.DragWindow ();
 		}
 
 		private void DrawSelectorButton(HotkeyAction hotkeyAction)
@@ -89,7 +90,7 @@ namespace SASHotkeys
 		private void OnToolbarOff()
 		{
 			Debug.Log (Constants.logPrefix + "Toolbar switched off.");
-			SASHotkeys.SaveHotkeys ();
+			SASHotkeys.Save ();
 			settingsWindowVisible = false;
 		}
 
@@ -113,10 +114,6 @@ namespace SASHotkeys
 
 		private List<KeyBinding> allKeyBindings;
 		private bool settingsWindowVisible = false;
-		private const int windowWidth = 400;
-		private const int windowHeight = 500;
-		private Rect settingsWindowPosition = new Rect (
-			(Screen.width - windowWidth) / 2, (Screen.height - windowHeight) / 2, windowWidth, windowHeight);
 		private ApplicationLauncherButton toolbarButton;
 		private HotkeyAction currentAction;
 	}

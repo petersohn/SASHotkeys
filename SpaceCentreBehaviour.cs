@@ -100,8 +100,9 @@ namespace SASHotkeys
 					var values = Enum.GetValues (typeof(KeyCode)).Cast<KeyCode> ();
 					allKeyBindings = new List<KeyBinding> ();
 					foreach (KeyCode key in values) {
-						// Filter out generic joystick buttons
-						if (!key.ToString ().StartsWith ("JoystickButton")) {
+						String keyName = key.ToString ();
+						// JoystickButtonX refers to buttons for any joystick, so filter them out.
+						if (!keyName.StartsWith ("JoystickButton") && !keyName.StartsWith("Mouse")) {
 							allKeyBindings.Add (new KeyBinding (key));
 						}
 					}

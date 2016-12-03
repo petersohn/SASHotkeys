@@ -20,7 +20,7 @@ namespace SASHotkeys
 
 		public void Start()
 		{
-			SASHotkeys.Load ();
+			Persistence.Load ();
 			if (toolbarButton == null) {
 				toolbarButton = ApplicationLauncher.Instance.AddModApplication (
 					OnToolbarOn, OnToolbarOff, null, null, null, null,
@@ -32,14 +32,14 @@ namespace SASHotkeys
 		public void OnDestroy()
 		{
 			ApplicationLauncher.Instance.RemoveModApplication (toolbarButton);
-			SASHotkeys.Save ();
+			Persistence.Save ();
 		}
 
 		public void OnGUI()
 		{
 			if (settingsWindowVisible) {
 				if (settingsWindow == null) {
-					settingsWindow = new SettingsWindow ();
+					settingsWindow = new SettingsWindow (HotkeyManager.MainManager);
 				}
 				settingsWindow.Draw ();
 			}
@@ -54,7 +54,7 @@ namespace SASHotkeys
 		private void OnToolbarOff()
 		{
 			Debug.Log (Constants.logPrefix + "Toolbar switched off.");
-			SASHotkeys.Save ();
+			Persistence.Save ();
 			settingsWindowVisible = false;
 		}
 

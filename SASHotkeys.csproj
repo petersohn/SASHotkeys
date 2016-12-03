@@ -40,6 +40,7 @@
     <Compile Include="SASHotkeys.cs" />
     <Compile Include="SASHotkeyAction.cs" />
     <Compile Include="SettingsWindow.cs" />
+    <Compile Include="Persistence.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">

@@ -6,11 +6,16 @@ using KSP.UI.Screens;
 
 namespace SASHotkeys
 {
-	internal class SettingsWindow
+	public class SettingsWindow
 	{
+		public SettingsWindow(HotkeyManager hotkeyManager)
+		{
+			this.hotkeyManager = hotkeyManager;
+		}
+
 		public void Draw()
 		{
-			SASHotkeys.settingsWindowPosition = GUILayout.Window(1, SASHotkeys.settingsWindowPosition,
+			Persistence.settingsWindowPosition = GUILayout.Window(1, Persistence.settingsWindowPosition,
 				DrawSettingsWindow, "SAS Hotkeys", HighLogic.Skin.window);
 		}
 
@@ -26,7 +31,7 @@ namespace SASHotkeys
 				}
 			}
 			scrollPosition = GUILayout.BeginScrollView (scrollPosition, false, true);
-			foreach (var element in HotkeyManager.MainManager) {
+			foreach (var element in hotkeyManager) {
 				GUILayout.BeginHorizontal ();
 				GUILayout.Label (element.Key);
 				DrawSelectorButton (element.Value);
@@ -102,6 +107,7 @@ namespace SASHotkeys
 		private const float buttonWidthThreshold = 10.0f;
 		private const String clearButtonText = "Clear";
 
+		private HotkeyManager hotkeyManager;
 		private List<KeyBinding> allKeyBindings;
 		private GUILayoutOption hotkeyButtonWidth;
 		private GUILayoutOption clearButtonWidth;

@@ -39,6 +39,7 @@
     <Compile Include="SpaceCentreBehaviour.cs" />
     <Compile Include="SASHotkeys.cs" />
     <Compile Include="SASHotkeyAction.cs" />
+    <Compile Include="SettingsWindow.cs" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="Assembly-CSharp">

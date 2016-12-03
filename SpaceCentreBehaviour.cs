@@ -54,7 +54,7 @@ namespace SASHotkeys
 					}
 				}
 			}
-			GUILayout.BeginVertical ();
+			settingsScrollPosition = GUILayout.BeginScrollView (settingsScrollPosition, false, true);
 			foreach (var element in HotkeyManager.MainManager) {
 				GUILayout.BeginHorizontal ();
 				GUILayout.Label (element.Key);
@@ -64,7 +64,7 @@ namespace SASHotkeys
 				}
 				GUILayout.EndHorizontal ();
 			}
-			GUILayout.EndVertical ();
+			GUILayout.EndScrollView ();
 			GUI.DragWindow ();
 		}
 
@@ -148,6 +148,7 @@ namespace SASHotkeys
 		private GUILayoutOption hotkeyButtonWidth;
 		private GUILayoutOption clearButtonWidth;
 		private bool settingsWindowVisible = false;
+		private Vector2 settingsScrollPosition = new Vector2 (0, 0);
 		private ApplicationLauncherButton toolbarButton;
 		private HotkeyAction currentAction;
 	}

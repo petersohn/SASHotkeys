@@ -8,17 +8,22 @@ namespace SASHotkeys
 {
 	public class SettingsWindow
 	{
+		public Vector2 WindowPosition
+		{
+			get { return windowRect.center; }
+			set { windowRect.center = value; }
+		}
+
 		public SettingsWindow(HotkeyManager hotkeyManager)
 		{
 			this.hotkeyManager = hotkeyManager;
-			groupTitleStyle = new GUIStyle (GUI.skin.label);
-			groupTitleStyle.alignment = TextAnchor.MiddleCenter;
 		}
 
 		public void Draw()
 		{
-			Persistence.settingsWindowPosition = GUILayout.Window(1, Persistence.settingsWindowPosition,
-				DrawSettingsWindow, "SAS Hotkeys", HighLogic.Skin.window);
+			CalculateStyles ();
+			windowRect = GUILayout.Window(1, windowRect, DrawSettingsWindow, "SAS Hotkeys",
+				HighLogic.Skin.window);
 		}
 
 		private void DrawSettingsWindow(int windowID)
@@ -39,7 +44,7 @@ namespace SASHotkeys
 					GUILayout.BeginHorizontal ();
 					GUILayout.Label (element.Key);
 					DrawSelectorButton (element.Value);
-					if (GUILayout.Button (clearButtonText, ClearButtonWidth)) {
+					if (GUILayout.Button (clearButtonText, GUILayout.Width(ClearButtonWidth))) {
 						element.Value.KeyBinding = new KeyBinding ();
 					}
 					GUILayout.EndHorizontal ();
@@ -49,14 +54,22 @@ namespace SASHotkeys
 			GUI.DragWindow ();
 		}
 
+		private void CalculateStyles()
+		{
+			if (groupTitleStyle == null) {
+				groupTitleStyle = new GUIStyle (GUI.skin.label);
+				groupTitleStyle.alignment = TextAnchor.MiddleCenter;
+			}
+		}
+
 		private void DrawSelectorButton(HotkeyAction hotkeyAction)
 		{
 			if (currentAction == hotkeyAction) {
-				if (GUILayout.Button ("...", HotkeyButtonWidth)) {
+				if (GUILayout.Button ("...", GUILayout.Width(HotkeyButtonWidth))) {
 					currentAction = null;
 				}
 			} else {
-				if (GUILayout.Button (hotkeyAction.KeyBinding.name, HotkeyButtonWidth)) {
+				if (GUILayout.Button (hotkeyAction.KeyBinding.name, GUILayout.Width(HotkeyButtonWidth))) {
 					currentAction = hotkeyAction;
 				}
 			}
@@ -64,6 +77,9 @@ namespace SASHotkeys
 
 		private void CalculateKeyBindings()
 		{
+			if (allKeyBindings != null) {
+				return;
+			}
 			var values = Enum.GetValues (typeof(KeyCode)).Cast<KeyCode> ();
 			allKeyBindings = new List<KeyBinding> ();
 			float maxWidth = 0.0f;
@@ -75,49 +91,67 @@ namespace SASHotkeys
 					maxWidth = Math.Max(maxWidth, GUI.skin.button.CalcSize(new GUIContent(keyName)).x);
 				}
 			}
-			hotkeyButtonWidth = GUILayout.Width(maxWidth + buttonWidthThreshold);
+			hotkeyButtonWidth = maxWidth + buttonWidthThreshold;
+			CalculateWindowSize ();
+		}
+
+		private void CalculateWindowSize()
+		{
+			float labelWidth = 0.0f;
+			foreach (var group in hotkeyManager) {
+				foreach (var element in group.Value) {
+					labelWidth = Math.Max (labelWidth, GUI.skin.label.CalcSize (new GUIContent (element.Key)).x);
+				}
+			}
+			float width = labelWidth + hotkeyButtonWidth + ClearButtonWidth + windowWidthThreshold;
+			Debug.Log (Constants.logPrefix + "Old window width: " + windowRect.width + ". New window width: " + width);
+			float halfDifference = (width - windowRect.width) / 2;
+			windowRect.xMin -= halfDifference;
+			windowRect.xMax += halfDifference;
 		}
 
 		private List<KeyBinding> AllKeyBindings
 		{
 			get {
-				if (allKeyBindings == null) {
-					CalculateKeyBindings ();
-				}
+				CalculateKeyBindings ();
 				return allKeyBindings;
 			}
 		}
 
-		private GUILayoutOption HotkeyButtonWidth
+		private float HotkeyButtonWidth
 		{
 			get {
-				if (hotkeyButtonWidth == null) {
-					CalculateKeyBindings ();
-				}
+				CalculateKeyBindings ();
 				return hotkeyButtonWidth;
 			}
 		}
 
-		private GUILayoutOption ClearButtonWidth
+		private float ClearButtonWidth
 		{
 			get {
-				if (clearButtonWidth == null) {
-					clearButtonWidth = GUILayout.Width(
-						GUI.skin.button.CalcSize (new GUIContent (clearButtonText)).x + buttonWidthThreshold);
+				if (clearButtonWidth == 0.0f) {
+					clearButtonWidth = GUI.skin.button.CalcSize (
+						new GUIContent (clearButtonText)).x + buttonWidthThreshold;
 				}
 				return clearButtonWidth;
 			}
 		}
 
 		private const float buttonWidthThreshold = 10.0f;
+		private const float windowWidthThreshold = 80.0f;
 		private const String clearButtonText = "Clear";
+		private const int defaultWindowWidth = 400;
+		private const int defaultWindowHeight = 500;
 
 		private HotkeyManager hotkeyManager;
 		private GUIStyle groupTitleStyle;
 		private List<KeyBinding> allKeyBindings;
-		private GUILayoutOption hotkeyButtonWidth;
-		private GUILayoutOption clearButtonWidth;
+		private float hotkeyButtonWidth = 0.0f;
+		private float clearButtonWidth = 0.0f;
 		private Vector2 scrollPosition = new Vector2 (0, 0);
+		public static Rect windowRect = new Rect (
+			(Screen.width - defaultWindowWidth) / 2, (Screen.height - defaultWindowHeight) / 2,
+			defaultWindowWidth, defaultWindowHeight);
 		private HotkeyAction currentAction;
 	}
 }

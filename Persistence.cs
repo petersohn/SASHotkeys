@@ -7,7 +7,7 @@ namespace SASHotkeys
 	{
 		static readonly string saveFileName = KSPUtil.ApplicationRootPath + "GameData/SASHotkeys_settings.cfg";
 
-		public static void Load()
+		public static void Load(HotkeyManager hotkeyManager, ref Vector2 settingsWindowPosition)
 		{
 			Debug.Log (Constants.logPrefix + "Loading from file.");
 			ConfigNode configFileNode = ConfigNode.Load (saveFileName);
@@ -17,7 +17,7 @@ namespace SASHotkeys
 			}
 
 			ConfigNode hotkeysNode = GetOrCreateNode (configFileNode, "hotkeys");
-			HotkeyManager.MainManager.Load (hotkeysNode);
+			hotkeyManager.Load (hotkeysNode);
 
 			ConfigNode settingsWindowNode = configFileNode.GetNode("settingsWindow");
 			if (settingsWindowNode != null) {
@@ -26,13 +26,13 @@ namespace SASHotkeys
 			}
 		}
 
-		public static void Save()
+		public static void Save(HotkeyManager hotkeyManager, Vector2 settingsWindowPosition)
 		{
 			Debug.Log (Constants.logPrefix + "Saving to file.");
 
 			ConfigNode baseNode = new ConfigNode();
 			ConfigNode hotkeysNode = baseNode.AddNode ("hotkeys");
-			HotkeyManager.MainManager.Save (hotkeysNode);
+			hotkeyManager.Save (hotkeysNode);
 
 			ConfigNode settingsWindowNode = baseNode.AddNode ("settingsWindow");
 			settingsWindowNode.AddValue ("x", settingsWindowPosition.x);
@@ -53,13 +53,6 @@ namespace SASHotkeys
 			}
 			return result;
 		}
-
-
-		public static Rect settingsWindowPosition = new Rect (
-			(Screen.width - windowWidth) / 2, (Screen.height - windowHeight) / 2, windowWidth, windowHeight);
-
-		private const int windowWidth = 400;
-		private const int windowHeight = 500;
 	}
 }
 

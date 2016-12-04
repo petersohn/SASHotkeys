@@ -6,9 +6,10 @@ namespace SASHotkeys
 	public class HotkeyAction : IConfigNode {
 		public delegate void Action();
 
-		public HotkeyAction(Action action, KeyBinding keyBinding = null)
+		public HotkeyAction(Action action, bool edgeTrigger = true, KeyBinding keyBinding = null)
 		{
 			this.keyBinding = keyBinding;
+			this.edgeTrigger = edgeTrigger;
 			this.action = action;
 		}
 
@@ -20,7 +21,7 @@ namespace SASHotkeys
 
 		internal void Fire() {
 			bool state = keyBinding.GetKey ();
-			if (state && !lastState) {
+			if (state && (!edgeTrigger || !lastState)) {
 				action ();
 			}
 			lastState = state;
@@ -38,6 +39,7 @@ namespace SASHotkeys
 		}
 
 		private KeyBinding keyBinding;
+		private bool edgeTrigger;
 		private bool lastState = false;
 		private Action action;
 	}

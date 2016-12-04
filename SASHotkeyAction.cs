@@ -5,7 +5,7 @@ namespace SASHotkeys
 	internal class SASHotkeyAction {
 		static internal HotkeyAction CreateSASHotkeyAction(KeyBinding keyBinding, VesselAutopilot.AutopilotMode mode)
 		{
-			return new HotkeyAction (new SASHotkeyAction (mode).GetAction (), keyBinding);
+			return new HotkeyAction (new SASHotkeyAction (mode).GetAction (), true, keyBinding);
 		}
 
 		internal SASHotkeyAction(VesselAutopilot.AutopilotMode mode)

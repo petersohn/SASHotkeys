@@ -11,6 +11,8 @@ namespace SASHotkeys
 		public SettingsWindow(HotkeyManager hotkeyManager)
 		{
 			this.hotkeyManager = hotkeyManager;
+			groupTitleStyle = new GUIStyle (GUI.skin.label);
+			groupTitleStyle.alignment = TextAnchor.MiddleCenter;
 		}
 
 		public void Draw()
@@ -31,14 +33,17 @@ namespace SASHotkeys
 				}
 			}
 			scrollPosition = GUILayout.BeginScrollView (scrollPosition, false, true);
-			foreach (var element in hotkeyManager) {
-				GUILayout.BeginHorizontal ();
-				GUILayout.Label (element.Key);
-				DrawSelectorButton (element.Value);
-				if (GUILayout.Button (clearButtonText, ClearButtonWidth)) {
-					element.Value.KeyBinding = new KeyBinding ();
+			foreach (var group in hotkeyManager) {
+				GUILayout.Label (group.Key, groupTitleStyle);
+				foreach (var element in group.Value) {
+					GUILayout.BeginHorizontal ();
+					GUILayout.Label (element.Key);
+					DrawSelectorButton (element.Value);
+					if (GUILayout.Button (clearButtonText, ClearButtonWidth)) {
+						element.Value.KeyBinding = new KeyBinding ();
+					}
+					GUILayout.EndHorizontal ();
 				}
-				GUILayout.EndHorizontal ();
 			}
 			GUILayout.EndScrollView ();
 			GUI.DragWindow ();
@@ -108,6 +113,7 @@ namespace SASHotkeys
 		private const String clearButtonText = "Clear";
 
 		private HotkeyManager hotkeyManager;
+		private GUIStyle groupTitleStyle;
 		private List<KeyBinding> allKeyBindings;
 		private GUILayoutOption hotkeyButtonWidth;
 		private GUILayoutOption clearButtonWidth;

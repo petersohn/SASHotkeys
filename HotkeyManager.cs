@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.RegularExpressions;
 using UnityEngine;
 
 namespace SASHotkeys
@@ -78,9 +79,9 @@ namespace SASHotkeys
 						element.Value.KeyBinding.name);
 					ConfigNode keyNode = new ConfigNode ();
 					element.Value.Save (keyNode);
-					groupNode.AddNode (element.Key, keyNode);
+					groupNode.AddNode (GetNodeName(element.Key), keyNode);
 				}
-				node.AddNode (group.Key, groupNode);
+				node.AddNode (GetNodeName(group.Key), groupNode);
 			}
 		}
 
@@ -88,19 +89,24 @@ namespace SASHotkeys
 		{
 			foreach (var group in hotkeyActions) {
 				Debug.Log (Constants.logPrefix + "Loading hotkey group: " + group.Key);
-				ConfigNode groupNode = node.GetNode (group.Key);
+				ConfigNode groupNode = node.GetNode (GetNodeName(group.Key));
 				if (groupNode == null) {
 					continue;
 				}
 				foreach (var element in group.Value) {
 					Debug.Log (Constants.logPrefix + "Loading hotkey: " + element.Key);
-					ConfigNode keyNode = groupNode.GetNode (element.Key);
+					ConfigNode keyNode = groupNode.GetNode (GetNodeName(element.Key));
 					if (keyNode != null) {
 						element.Value.Load (keyNode);
 					}
 					Debug.Log (Constants.logPrefix + "Loaded hotkey: " + element.Value.KeyBinding.name);
 				}
 			}
+		}
+
+		private static String GetNodeName(String name)
+		{
+			return Regex.Replace (name, "[^a-zA-Z0-9]", _ => "_");
 		}
 
 		private HotkeyActions hotkeyActions = new HotkeyActions();

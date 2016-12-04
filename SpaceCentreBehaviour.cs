@@ -57,7 +57,7 @@ namespace SASHotkeys
 
 		private void Load()
 		{
-			Vector2 settingsWindowPosition = new Vector2();
+			Vector2 settingsWindowPosition = new Vector2(Screen.width / 2.0f, Screen.height / 2.0f);
 			Persistence.Load (HotkeyManager.MainManager, ref settingsWindowPosition);
 			settingsWindow = new SettingsWindow (HotkeyManager.MainManager);
 			settingsWindow.WindowPosition = settingsWindowPosition;

@@ -149,9 +149,7 @@ namespace SASHotkeys
 		private float hotkeyButtonWidth = 0.0f;
 		private float clearButtonWidth = 0.0f;
 		private Vector2 scrollPosition = new Vector2 (0, 0);
-		public static Rect windowRect = new Rect (
-			(Screen.width - defaultWindowWidth) / 2, (Screen.height - defaultWindowHeight) / 2,
-			defaultWindowWidth, defaultWindowHeight);
+		public static Rect windowRect = new Rect (0, 0,	defaultWindowWidth, defaultWindowHeight);
 		private HotkeyAction currentAction;
 	}
 }

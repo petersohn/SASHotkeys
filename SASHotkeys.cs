@@ -1,39 +1,47 @@
 ﻿using System;
+using UnityEngine;
+using HotkeyManager;
 
 namespace SASHotkeys
 {
-	internal class SASHotkeys
+	[KSPAddon (KSPAddon.Startup.SpaceCentre, false)]
+	internal class SASHotkeys : MonoBehaviour
 	{
-		internal static void InitializeHotkeyManager()
+		public void Awake()
 		{
-			HotkeyManager.MainManager.Add("SAS Hotkeys", "Stability assist",
+			InitializeHotkeys ();
+		}
+
+		private static void InitializeHotkeys()
+		{
+			HotkeyManager.HotkeyManager.MainManager.Add("SAS Hotkeys", "Stability assist",
 				SASHotkeyAction.CreateSASHotkeyAction(
 					new KeyBinding(), VesselAutopilot.AutopilotMode.StabilityAssist));
-			HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold propagade",
+			HotkeyManager.HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold propagade",
 				SASHotkeyAction.CreateSASHotkeyAction(
 					new KeyBinding(), VesselAutopilot.AutopilotMode.Prograde));
-			HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold retrograde",
+			HotkeyManager.HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold retrograde",
 				SASHotkeyAction.CreateSASHotkeyAction(
 					new KeyBinding(), VesselAutopilot.AutopilotMode.Retrograde));
-			HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold normal",
+			HotkeyManager.HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold normal",
 				SASHotkeyAction.CreateSASHotkeyAction(
 					new KeyBinding(), VesselAutopilot.AutopilotMode.Normal));
-			HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold anti-normal",
+			HotkeyManager.HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold anti-normal",
 				SASHotkeyAction.CreateSASHotkeyAction(
 					new KeyBinding(), VesselAutopilot.AutopilotMode.Antinormal));
-			HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold radial in",
+			HotkeyManager.HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold radial in",
 				SASHotkeyAction.CreateSASHotkeyAction(
 					new KeyBinding(), VesselAutopilot.AutopilotMode.RadialIn));
-			HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold radial out",
+			HotkeyManager.HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold radial out",
 				SASHotkeyAction.CreateSASHotkeyAction(
 					new KeyBinding(), VesselAutopilot.AutopilotMode.RadialOut));
-			HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold target",
+			HotkeyManager.HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold target",
 				SASHotkeyAction.CreateSASHotkeyAction(
 					new KeyBinding(), VesselAutopilot.AutopilotMode.Target));
-			HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold anti-target",
+			HotkeyManager.HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold anti-target",
 				SASHotkeyAction.CreateSASHotkeyAction(
 					new KeyBinding(), VesselAutopilot.AutopilotMode.AntiTarget));
-			HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold maneuver node",
+			HotkeyManager.HotkeyManager.MainManager.Add("SAS Hotkeys", "Hold maneuver node",
 				SASHotkeyAction.CreateSASHotkeyAction(
 					new KeyBinding(), VesselAutopilot.AutopilotMode.Maneuver));
 		}

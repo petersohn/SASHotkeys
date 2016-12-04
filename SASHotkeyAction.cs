@@ -1,4 +1,5 @@
 ﻿using System;
+using HotkeyManager;
 
 namespace SASHotkeys
 {

@@ -28,9 +28,13 @@ namespace SASHotkeys
 		{
 			InitializeHotkeys ();
 		}
-
+			
 		private static void InitializeHotkeys()
 		{
+			HotkeyManager.HotkeyManager.MainManager.Add("SAS Hotkeys", "Enable SAS",
+				new HotkeyAction (SASHotkeyAction.EnableSAS, true, new KeyBinding()));
+			HotkeyManager.HotkeyManager.MainManager.Add("SAS Hotkeys", "Disable SAS",
+				new HotkeyAction (SASHotkeyAction.DisableSAS, true, new KeyBinding()));
 			HotkeyManager.HotkeyManager.MainManager.Add("SAS Hotkeys", "Stability assist",
 				SASHotkeyAction.CreateSASHotkeyAction(
 					new KeyBinding(), VesselAutopilot.AutopilotMode.StabilityAssist));

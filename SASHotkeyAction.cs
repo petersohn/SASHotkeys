@@ -21,9 +21,19 @@ using HotkeyManager;
 namespace SASHotkeys
 {
 	internal class SASHotkeyAction {
-		static internal HotkeyAction CreateSASHotkeyAction(KeyBinding keyBinding, VesselAutopilot.AutopilotMode mode)
+		internal static HotkeyAction CreateSASHotkeyAction(KeyBinding keyBinding, VesselAutopilot.AutopilotMode mode)
 		{
 			return new HotkeyAction (new SASHotkeyAction (mode).GetAction (), true, keyBinding);
+		}
+
+		internal static void EnableSAS()
+		{
+			FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
+		}
+
+		internal static void DisableSAS()
+		{
+			FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, false);
 		}
 
 		internal SASHotkeyAction(VesselAutopilot.AutopilotMode mode)
@@ -36,7 +46,7 @@ namespace SASHotkeys
 			return Fire;
 		}
 
-		void Fire()
+		private void Fire()
 		{
 			FlightGlobals.ActiveVessel.Autopilot.SetMode (mode);
 		}

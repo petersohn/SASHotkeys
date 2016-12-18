@@ -32,13 +32,9 @@ namespace SASHotkeys
 				Debug.Log (Constants.logPrefix + "Config file not found. Creating empty config.");
 				configFileNode = new ConfigNode ();
 			}
-
-			if (configFileNode.HasValue (autoEnableName)) {
-				configFileNode.TryGetValue (autoEnableName, ref AutoEnable);
-			}
-			if (configFileNode.HasValue (continuousTriggerName)) {
-				configFileNode.TryGetValue (continuousTriggerName, ref ContinuousTrigger);
-			}
+				
+			configFileNode.TryGetValue (autoEnableName, ref AutoEnable);
+			configFileNode.TryGetValue (continuousTriggerName, ref ContinuousTrigger);
 		}
 
 		public void Save ()
@@ -51,16 +47,6 @@ namespace SASHotkeys
 			configFileNode.SetValue (autoEnableName, AutoEnable, true);
 			configFileNode.SetValue (continuousTriggerName, ContinuousTrigger, true);
 			configFileNode.Save (saveFileName);
-		}
-
-		private static ConfigNode GetOrCreateNode(ConfigNode node, string name)
-		{
-			ConfigNode result = node.GetNode (name);
-			if (result == null) {
-				result = new ConfigNode ();
-				node.AddNode (name, result);
-			}
-			return result;
 		}
 
 		private ConfigNode configFileNode;

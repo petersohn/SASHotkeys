@@ -39,6 +39,7 @@ namespace SASHotkeys
 		internal SASHotkeyAction(VesselAutopilot.AutopilotMode mode)
 		{
 			this.mode = mode;
+			this.configuration = Configuration.Instance;
 		}
 
 		internal HotkeyAction.Action GetAction()
@@ -48,10 +49,15 @@ namespace SASHotkeys
 
 		private void Fire()
 		{
-			FlightGlobals.ActiveVessel.Autopilot.SetMode (mode);
+			if (configuration.AutoEnable) {
+				EnableSAS ();
+			}
+			FlightGlobals.ActiveVessel.Autopilot.Enable (mode);
 		}
 
-		VesselAutopilot.AutopilotMode mode;
+		private VesselAutopilot.AutopilotMode mode;
+		private Configuration configuration;
+
 	};
 }
 

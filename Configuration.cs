@@ -18,8 +18,10 @@ namespace SASHotkeys
 		private static Configuration instance;
 
 		public bool AutoEnable = true;
+		public bool ContinuousTrigger = false;
 
 		const string autoEnableName = "autoEnable";
+		const string continuousTriggerName = "continuousTrigger";
 		static readonly string saveFileName = KSPUtil.ApplicationRootPath + "GameData/SASHotkeys/Settings.cfg";
 
 		public void Load ()
@@ -34,6 +36,9 @@ namespace SASHotkeys
 			if (configFileNode.HasValue (autoEnableName)) {
 				configFileNode.TryGetValue (autoEnableName, ref AutoEnable);
 			}
+			if (configFileNode.HasValue (continuousTriggerName)) {
+				configFileNode.TryGetValue (continuousTriggerName, ref ContinuousTrigger);
+			}
 		}
 
 		public void Save ()
@@ -44,6 +49,7 @@ namespace SASHotkeys
 				return;
 			}
 			configFileNode.SetValue (autoEnableName, AutoEnable, true);
+			configFileNode.SetValue (continuousTriggerName, ContinuousTrigger, true);
 			configFileNode.Save (saveFileName);
 		}
 

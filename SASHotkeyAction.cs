@@ -17,13 +17,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 using System;
 using HotkeyManager;
+using UnityEngine;
 
 namespace SASHotkeys
 {
 	internal class SASHotkeyAction {
 		internal static HotkeyAction CreateSASHotkeyAction(KeyBinding keyBinding, VesselAutopilot.AutopilotMode mode)
 		{
-			return new HotkeyAction (new SASHotkeyAction (mode).GetAction (), true, keyBinding);
+			return new HotkeyAction (new SASHotkeyAction (mode).GetAction (), !Configuration.Instance.ContinuousTrigger,
+				keyBinding);
 		}
 
 		internal static void EnableSAS()

@@ -15,6 +15,10 @@ namespace SASHotkeys
 			toolTip = "Automatically enable SAS if a SAS mode hotkey is pressed.")]
 		public bool autoEnable = true;
 
+		[GameParameters.CustomParameterUI("Continuous Trigger", autoPersistance = false,
+			toolTip = "Continuously trigger the hotkey action while the button is pressed.")]
+		public bool continuousTrigger = true;
+
 		public override void OnLoad (ConfigNode node)
 		{
 			Debug.Log (Constants.logPrefix + "Loading GUI.");
@@ -37,11 +41,18 @@ namespace SASHotkeys
 		private void loadVariables()
 		{
 			autoEnable = Configuration.Instance.AutoEnable;
+			continuousTrigger = Configuration.Instance.ContinuousTrigger;
 		}
 
 		private void saveVariables()
 		{
 			Configuration.Instance.AutoEnable = autoEnable;
+			if (Configuration.Instance.ContinuousTrigger != continuousTrigger) {
+				Configuration.Instance.ContinuousTrigger = continuousTrigger;
+				foreach (var element in HotkeyManager.HotkeyManager.MainManager.GetGroup(SASHotkeys.groupName)) {
+					element.Value.EdgeTrigger = !continuousTrigger;
+				}
+			}
 		}
 
 		private bool loaded = false;

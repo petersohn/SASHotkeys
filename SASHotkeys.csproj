@@ -42,7 +42,7 @@
       <HintPath>..\..\..\.local\share\Steam\steamapps\common\Kerbal Space Program\KSP_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
     <Reference Include="HotkeyManager">
-      <HintPath>..\HotkeyManager\bin\Debug\HotkeyManager.dll</HintPath>
+      <HintPath>..\HotkeyManager\bin\Release\HotkeyManager.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

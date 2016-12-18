@@ -30,12 +30,16 @@ namespace SASHotkeys
 
 		internal static void EnableSAS()
 		{
-			FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, true);
+			if (!FlightGlobals.ActiveVessel.ActionGroups [KSPActionGroup.SAS]) {
+				FlightGlobals.ActiveVessel.ActionGroups.SetGroup (KSPActionGroup.SAS, true);
+			}
 		}
 
 		internal static void DisableSAS()
 		{
-			FlightGlobals.ActiveVessel.ActionGroups.SetGroup(KSPActionGroup.SAS, false);
+			if (FlightGlobals.ActiveVessel.ActionGroups [KSPActionGroup.SAS]) {
+				FlightGlobals.ActiveVessel.ActionGroups.SetGroup (KSPActionGroup.SAS, false);
+			}
 		}
 
 		internal SASHotkeyAction(VesselAutopilot.AutopilotMode mode)
@@ -54,7 +58,9 @@ namespace SASHotkeys
 			if (configuration.AutoEnable) {
 				EnableSAS ();
 			}
-			FlightGlobals.ActiveVessel.Autopilot.Enable (mode);
+			if (FlightGlobals.ActiveVessel.Autopilot.Mode != mode) {
+				FlightGlobals.ActiveVessel.Autopilot.Enable (mode);
+			}
 		}
 
 		private VesselAutopilot.AutopilotMode mode;
